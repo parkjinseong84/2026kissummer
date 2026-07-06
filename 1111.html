@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>호치민시한국국제학교(KIS) 6학년 여름방학 대시보드</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Pretendard', sans-serif; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4f46e5',   /* 인디고 블루 */
+                        secondary: '#10b981', /* 에메랄드 그린 */
+                        safety: '#f43f5e'     /* 로즈 핑크 */
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-slate-50 text-slate-800 h-screen flex flex-col antialiased">
+
+    <header class="bg-white/80 backdrop-blur-md border-b border-slate-100 sticky top-0 z-50">
+        <div class="max-w-5xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center py-3 md:h-16 gap-3">
+            <div class="flex items-center gap-2 group cursor-pointer" onclick="switchTab('home')">
+                <div class="bg-indigo-50 p-2 rounded-xl text-primary group-hover:scale-110 transition-transform">
+                    <i class="fa-solid fa-palm-tree text-xl"></i>
+                </div>
+                <span class="font-extrabold text-lg tracking-tight bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">KIS 6th Summer</span>
+            </div>
+            
+            <nav class="flex flex-wrap justify-center gap-1 bg-slate-100/80 p-1 rounded-xl" id="nav-tabs">
+                <button onclick="switchTab('home')" class="tab-btn active px-4 py-2 rounded-lg text-xs font-bold text-primary bg-white shadow-sm transition-all">
+                    <i class="fa-solid fa-house mr-1"></i> 홈
+                </button>
+                <button onclick="switchTab('tasks')" class="tab-btn px-4 py-2 rounded-lg text-xs font-bold text-slate-500 hover:text-slate-800 transition-all">
+                    <i class="fa-solid fa-square-check mr-1"></i> 과제 선택
+                </button>
+                <button onclick="switchTab('routine')" class="tab-btn px-4 py-2 rounded-lg text-xs font-bold text-slate-500 hover:text-slate-800 transition-all">
+                    <i class="fa-regular fa-clock mr-1"></i> 하루 루틴
+                </button>
+                <button onclick="switchTab('trip')" class="tab-btn px-4 py-2 rounded-lg text-xs font-bold text-slate-500 hover:text-slate-800 transition-all">
+                    <i class="fa-solid fa-map-location-dot mr-1"></i> 일정 기록
+                </button>
+                <button onclick="switchTab('safety')" class="tab-btn px-4 py-2 rounded-lg text-xs font-bold text-slate-500 hover:text-slate-800 transition-all">
+                    <i class="fa-solid fa-shield-halved mr-1 text-safety"></i> 안전 가이드
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="flex-1 max-w-5xl w-full mx-auto px-4 py-6 overflow-y-auto">
+        
+        <div id="home" class="tab-content active space-y-6">
+            <div class="bg-gradient-to-br from-indigo-600 via-primary to-blue-500 rounded-3xl p-6 md:p-8 text-white shadow-md shadow-indigo-100 relative overflow-hidden">
+                <div class="relative z-10 max-w-xl">
+                    <span class="bg-white/20 backdrop-blur-md text-white text-[10px] font-extrabold px-2.5 py-1 rounded-full uppercase tracking-wider">🇻🇳 Ho Chi Minh City</span>
+                    <h1 class="text-2xl md:text-3xl font-extrabold mt-3 mb-2 tracking-tight">신짜오! 6학년 여름방학 대시보드</h1>
+                    <p class="text-indigo-100 text-xs md:text-sm font-medium leading-relaxed">내가 스스로 세운 계획과 미션을 달성하며 창의적이고 건강한 34일을 만들어 보세요!</p>
+                </div>
+                <i class="fa-solid fa-umbrella-beach absolute -bottom-6 -right-4 text-9xl text-white/10 rotate-12 pointer-events-none"></i>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 flex flex-col md:flex-row justify-between items-center gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-indigo-50 flex items-center justify-center text-primary text-lg">
+                        <i class="fa-solid fa-user-graduate"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-sm text-slate-800" id="welcome-message">반가워요, KIS 6학년 어린이! 👋</h3>
+                        <p class="text-xs text-slate-400">학급 정보와 이름을 입력하면 나만의 대시보드가 활성화됩니다.</p>
+                    </div>
+                </div>
+                <div class="flex flex-wrap gap-2 w-full md:w-auto justify-end">
+                    <select id="user-class" onchange="saveProfile()" class="text-xs font-bold bg-slate-50 px-3 py-2.5 rounded-xl border border-slate-200 outline-none text-slate-700">
+                        <option value="">-- 학반 선택 --</option>
+                        <option value="1">6학년 1반</option>
+                        <option value="2">6학년 2반</option>
+                        <option value="3">6학년 3반</option>
+                        <option value="4">6학년 4반</option>
+                        <option value="5">6학년 5반</option>
+                        <option value="6">6학년 6반</option>
+                    </select>
+                    <select id="user-number" onchange="saveProfile()" class="text-xs font-bold bg-slate-50 px-3 py-2.5 rounded-xl border border-slate-200 outline-none text-slate-700">
+                        <option value="">-- 번호 선택 --</option>
+                        </select>
+                    <input type="text" id="user-name" oninput="saveProfile()" placeholder="이름 입력" class="text-xs font-bold px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-primary w-28 text-center">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 flex flex-col justify-between">
+                    <div>
+                        <h2 class="text-sm font-bold text-slate-800 mb-3 flex items-center"><i class="fa-solid fa-calendar text-primary mr-2"></i>방학 기본 일정</h2>
+                        <div class="space-y-3">
+                            <div class="flex items-center gap-3 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                                <div class="w-8 h-8 rounded-lg bg-indigo-50 flex items-center justify-center text-primary text-xs font-bold">식</div>
+                                <div><p class="text-xs font-bold text-slate-800">여름방학식</p><p class="text-[11px] text-slate-400">7월 14일 (화)</p></div>
+                            </div>
+                            <div class="flex items-center gap-3 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                                <div class="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center text-secondary text-xs font-bold">간</div>
+                                <div><p class="text-xs font-bold text-slate-800">방학 기간 (34일간)</p><p class="text-[11px] text-slate-400">7월 15일 (수) ~ 8월 17일 (월)</p></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-amber-50/60 rounded-2xl border border-amber-100 p-5 flex flex-col justify-between">
+                    <div>
+                        <h2 class="text-sm font-bold text-amber-900 mb-2 flex items-center">🎒 8월 18일 (화) 개학날 등교 안내</h2>
+                        <p class="text-xs text-amber-700/90 leading-relaxed mb-4">새로운 학기가 시작되는 개학일입니다. 늦지 않게 등교하고 준비물을 잘 챙겨오세요!</p>
+                    </div>
+                    <div class="bg-white p-3 rounded-xl border border-amber-200/60 shadow-sm flex justify-between items-center">
+                        <span class="text-xs font-bold text-slate-800">🔔 당일 하교 시간</span>
+                        <span class="text-xs font-extrabold text-primary bg-indigo-50 px-2.5 py-1 rounded-lg">4교시 수업 후 급식 먹고 12:10 하교!</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 md:col-span-1 flex flex-col justify-between">
+                    <div>
+                        <span class="bg-indigo-50 text-primary text-[10px] font-bold px-2.5 py-1 rounded-full"><i class="fa-solid fa-pencil mr-1"></i>교육케어</span>
+                        <h3 class="font-bold text-base text-slate-800 mt-3">여름방학 방과후학교</h3>
+                        <p class="text-xl font-extrabold text-primary mt-1">7월 20일 ~ 31일</p>
+                    </div>
+                    <p class="text-[11px] text-slate-400 border-t border-dashed pt-2 mt-4">주말을 제외한 평일 기준 총 10일간 진행됩니다.</p>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 md:col-span-2">
+                    <span class="bg-emerald-50 text-secondary text-[10px] font-bold px-2.5 py-1 rounded-full"><i class="fa-solid fa-book-open mr-1"></i>도서관 개방</span>
+                    <h3 class="font-bold text-sm text-slate-800 mt-2 mb-3">방학 중 학교 도서관 이용 시간</h3>
+                    <div class="overflow-hidden border border-slate-100 rounded-xl">
+                        <table class="w-full text-left text-[11px]">
+                            <thead class="bg-slate-50 text-slate-500 font-bold border-b border-slate-100">
+                                <tr><th class="py-2 px-3">운영 기간</th><th class="py-2 px-3">이용 시간 (토,일 휴무)</th></tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 text-slate-600 font-medium">
+                                <tr><td class="py-2 px-3">7월 15일(수) ~ 7월 31일(금)</td><td class="py-2 px-3 text-primary font-bold">07:30 ~ 16:30</td></tr>
+                                <tr><td class="py-2 px-3">8월 3일(월) ~ 8월 17일(월)</td><td class="py-2 px-3 text-secondary font-bold">07:30 ~ 15:30</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p class="text-[11px] text-rose-500 font-medium mt-2 flex items-center"><i class="fa-solid fa-circle-exclamation mr-1"></i> 점심시간(12:00 ~ 13:30)은 도서관 문을 닫습니다.</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="tasks" class="tab-content space-y-6">
+            <div>
+                <h2 class="text-xl font-bold text-slate-800">📋 학교 권장 방학 과제</h2>
+                <p class="text-xs text-slate-400 mt-0.5">원하는 활동 우측의 버튼을 누르면 하단의 나의 미션 보드에 자동으로 담깁니다.</p>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs border-collapse">
+                        <thead>
+                            <tr class="bg-slate-950 text-white font-semibold">
+                                <th class="py-3 px-4 text-center w-12">번호</th>
+                                <th class="py-3 px-4 w-20 text-center">분류</th>
+                                <th class="py-3 px-4">추천 자율 활동 내용</th>
+                                <th class="py-3 px-4 text-center w-24">선택하기</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-slate-600 divide-y divide-slate-100 font-medium" id="recommend-task-table"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="bg-indigo-50/50 rounded-2xl border border-indigo-100/60 p-4">
+                <h3 class="font-bold text-xs text-indigo-900 mb-2 flex items-center"><i class="fa-solid fa-circle-info mr-1.5"></i> 🖼️ 온라인 무료 미술관 탐방 링크</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                    <a href="http://www.mmca.go.kr/pr/movList.do?mbMovCd=01" target="_blank" class="bg-white p-2.5 rounded-xl border border-indigo-100 flex justify-between items-center hover:border-primary transition-all group">
+                        <span class="font-bold text-slate-700">국립현대미술관 <span class="text-[10px] text-slate-400 ml-1 font-normal">(가입 없음)</span></span>
+                        <i class="fa-solid fa-arrow-up-right-from-square text-slate-300 group-hover:text-primary transition-colors"></i>
+                    </a>
+                    <a href="http://www.savinamuseum.com/kor/index.action" target="_blank" class="bg-white p-2.5 rounded-xl border border-indigo-100 flex justify-between items-center hover:border-primary transition-all group">
+                        <span class="font-bold text-slate-700">버츄얼미술관 <span class="text-[10px] text-slate-400 ml-1 font-normal">(가입 없음)</span></span>
+                        <i class="fa-solid fa-arrow-up-right-from-square text-slate-300 group-hover:text-primary transition-colors"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="border-t border-slate-200/60 pt-6 space-y-4">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-800 flex items-center"><i class="fa-solid fa-star text-amber-500 mr-2"></i>🎯 <span id="user-title-dashboard">나의</span> 여름방학 미션 보드</h2>
+                        <p class="text-xs text-slate-400">선택한 미션들을 체크박스로 달성 완료해 보세요.</p>
+                    </div>
+                    <div class="flex gap-1.5 bg-white p-1.5 rounded-xl border border-slate-200 shadow-sm w-full sm:w-auto">
+                        <select id="task-category" class="text-xs font-bold bg-slate-50 px-2 rounded-lg text-slate-600 outline-none">
+                            <option value="hobby">🎨 취미</option>
+                            <option value="explore">🔬 탐구</option>
+                            <option value="health">🏃 건강</option>
+                        </select>
+                        <input type="text" id="task-title" placeholder="나만의 미션 직접 적기" class="text-xs px-2 py-1.5 outline-none flex-1 sm:w-40 bg-transparent">
+                        <button onclick="addTaskItem()" class="px-3 py-1.5 bg-primary text-white text-xs font-bold rounded-lg hover:bg-indigo-600 shadow-sm">추가</button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-4">
+                        <h3 class="font-bold text-xs text-indigo-600 mb-3 flex items-center bg-indigo-50 px-2 py-1.5 rounded-lg"><i class="fa-solid fa-palette mr-2"></i>🎨 취미 활동</h3>
+                        <div id="tasks-hobby" class="space-y-2"></div>
+                    </div>
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-4">
+                        <h3 class="font-bold text-xs text-emerald-600 mb-3 flex items-center bg-emerald-50 px-2 py-1.5 rounded-lg"><i class="fa-solid fa-magnifying-glass mr-2"></i>🔬 탐구 활동</h3>
+                        <div id="tasks-explore" class="space-y-2"></div>
+                    </div>
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-4">
+                        <h3 class="font-bold text-xs text-rose-600 mb-3 flex items-center bg-rose-50 px-2 py-1.5 rounded-lg"><i class="fa-solid fa-heart-pulse mr-2"></i>🏃 건강 관리</h3>
+                        <div id="tasks-health" class="space-y-2"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="routine" class="tab-content space-y-4">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h2 class="text-xl font-bold text-slate-800">⏰ 나만의 일일 방학 생활표</h2>
+                    <p class="text-xs text-slate-400 mt-0.5">6학년 권장 표준 루틴을 참고해 시간과 행동 계획을 내 마음대로 조정해 보세요.</p>
+                </div>
+                <button onclick="addRoutineItem()" class="px-3 py-2 bg-primary text-white rounded-xl text-xs font-bold hover:bg-indigo-600 shadow-sm">
+                    <i class="fa-solid fa-plus mr-1"></i> 새 일정 추가
+                </button>
+            </div>
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-4 md:p-6 space-y-3" id="routine-list"></div>
+        </div>
+
+        <div id="trip" class="tab-content space-y-4">
+            <div class="flex justify-between items-end">
+                <div>
+                    <h2 class="text-xl font-bold text-slate-800">✈️ 방학 주요 약속 및 기억 저장고</h2>
+                    <p class="text-xs text-slate-400 mt-0.5">가족 여행, 친구 생일파티, 학원 특강 스케줄을 달력 형태로 관리하세요.</p>
+                </div>
+                <a href="https://student.crownyuja.co.kr/kis/tripinfo.html" target="_blank" class="text-xs text-primary font-bold hover:underline">
+                    <i class="fa-solid fa-link mr-1"></i>학교 Trip Info 페이지 바로가기
+                </a>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4 text-xs font-semibold">
+                    <div><label class="block text-slate-400 mb-1">날짜</label><input type="date" id="trip-date" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 outline-none focus:border-primary"></div>
+                    <div><label class="block text-slate-400 mb-1">핵심 제목</label><input type="text" id="trip-title" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 outline-none focus:border-primary" placeholder="예: 무이네 가족 여행"></div>
+                    <div><label class="block text-slate-400 mb-1">자세한 일지 메모</label><input type="text" id="trip-memo" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 outline-none focus:border-primary" placeholder="함께 적어둘 추억이나 상세 내용"></div>
+                </div>
+                <div class="flex justify-end">
+                    <button onclick="addTripItem()" class="px-5 py-2.5 bg-secondary text-white font-bold rounded-xl text-xs hover:bg-emerald-600 shadow-sm">
+                        <i class="fa-solid fa-check mr-1"></i> 추억 타임라인에 올리기
+                    </button>
+                </div>
+            </div>
+
+            <div id="trip-timeline" class="space-y-4 relative before:absolute before:left-4 before:top-2 before:bottom-2 before:w-0.5 before:bg-slate-100"></div>
+        </div>
+
+        <div id="safety" class="tab-content space-y-6">
+            <div>
+                <h2 class="text-xl font-bold text-slate-800">🛡️ KIS 어린이 생활 수칙 가이드</h2>
+                <p class="text-xs text-slate-400 mt-0.5">안전제일! 한 달간 몸 건강히 방학을 보낼 수 있도록 스스로 약속해요.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 border-t-4 border-t-emerald-500">
+                    <h3 class="font-bold text-xs text-emerald-700 mb-3 flex items-center bg-emerald-50/50 p-2 rounded-xl"><i class="fa-solid fa-virus-slash mr-2"></i> 🦠 위생 및 건강 안전</h3>
+                    <ul class="space-y-2.5 text-[11px] text-slate-600 font-medium">
+                        <li class="flex items-start gap-2"><input type="checkbox" class="mt-0.5 rounded text-emerald-500"> <span>외출 후 귀가하면 흐르는 물에 30초 이상 깨끗하게 비누로 손 씻기</span></li>
+                        <li class="flex items-start gap-2"><input type="checkbox" class="mt-0.5 rounded text-emerald-500"> <span>기침이나 재채기가 나올 때는 손바닥 대신 옷소매 안쪽으로 가려 예절 지키기</span></li>
+                        <li class="flex items-start gap-2"><input type="checkbox" class="mt-0.5 rounded text-emerald-500"> <span>방학 기간 환기가 잘 되지 않는 좁고 복잡한 실내 장소 방문은 스스로 피하기</span></li>
+                    </ul>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 border-t-4 border-t-indigo-500">
+                    <h3 class="font-bold text-xs text-indigo-700 mb-3 flex items-center bg-indigo-50/50 p-2 rounded-xl"><i class="fa-solid fa-book-bookmark mr-2"></i> 📖 자기주도적 시간 채우기</h3>
+                    <ul class="space-y-2.5 text-[11px] text-slate-600 font-medium">
+                        <li class="flex items-start gap-2"><input type="checkbox" class="mt-0.5 rounded text-indigo-500"> <span>무조건적인 사교육에 의지하기보다는 스스로 약속한 미션을 찾아서 해결하기</span></li>
+                        <li class="flex items-start gap-2"><input type="checkbox" class="mt-0.5 rounded text-indigo-500"> <span>지나친 학업 선행보다는 좋은 책 읽기, 창의적이고 감각적인 문화 활동 즐기기</span></li>
+                        <li class="flex items-start gap-2"><input type="checkbox" class="mt-0.5 rounded text-indigo-500"> <span>지난 학기 동안 부족하다고 느꼈던 배움의 핵심 개념을 복습하기</span></li>
+                    </ul>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 border-t-4 border-t-blue-500">
+                    <h3 class="font-bold text-xs text-blue-700 mb-3 flex items-center bg-blue-50/50 p-2 rounded-xl"><i class="fa-solid fa-star mr-2"></i> ✨ 올바른 방학 생활 예절</h3>
+                    <ul class="space-y-2.5 text-[11px] text-slate-600 font-medium">
+                        <li class="flex items-start gap-2"><input type="checkbox" class="mt-0.5 rounded text-blue-500"> <span>내가 만든 매일 루틴을 활용하여 방학 중 불규칙해지기 쉬운 생활 조절하기</span></li>
+                        <li class="flex items-start gap-2"><input type="checkbox" class="mt-0.5 rounded text-blue-500"> <span>안 쓰는 플러그는 뽑고 쓰레기를 줄이는 등 에너지를 아끼는 착한 지구 지킴이 되기</span></li>
+                        <li class="flex items-start gap-2"><input type="checkbox" class="mt-0.5 rounded text-blue-500"> <span>8월 15일 대한민국 광복절 아침에 가족과 함께 잊지 말고 태극기 꼭 달기</span></li>
+                    </ul>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 border-t-4 border-t-orange-500">
+                    <h3 class="font-bold text-xs text-orange-700 mb-3 flex items-center bg-orange-50/50 p-2 rounded-xl"><i class="fa-solid fa-house-chimney-user mr-2"></i> 🏡 안전사고 절대 방지</h3>
+                    <ul class="space-y-2.5 text-[11px] text-slate-600 font-medium">
+                        <li class="flex items-start gap-2"><input type="checkbox" class="mt-0.5 rounded text-orange-500"> <span>밖으로 외출할 때는 부모님께 행선지, 목적, 언제 돌아오는지 확실히 전하기</span></li>
+                        <li class="flex items-start gap-2"><input type="checkbox" class="mt-0.5 rounded text-orange-500"> <span>스마트폰 게임 시간을 줄이고, 하루에 한 번 부모님과 깊이 있는 소통하기</span></li>
+                        <li class="flex items-start gap-2"><input type="checkbox" class="mt-0.5 rounded text-orange-500"> <span>모르는 사람을 절대 따라가지 않으며 안전이 보장된 인도로만 바르게 보행하기</span></li>
+                    </ul>
+                </div>
+
+                <div class="bg-slate-900 rounded-2xl p-5 text-white md:col-span-2 shadow-inner">
+                    <h3 class="font-bold text-xs text-rose-400 mb-3 flex items-center"><i class="fa-solid fa-phone mr-2"></i> 🚨 현지 긴급 상황 구조 및 신고망</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
+                        <div class="grid grid-cols-3 gap-2 text-center font-bold text-xs">
+                            <div class="bg-slate-800 p-2 rounded-xl"><p class="text-[10px] text-slate-400 mb-0.5">베트남 경찰</p><p class="text-white">113</p></div>
+                            <div class="bg-slate-800 p-2 rounded-xl"><p class="text-[10px] text-slate-400 mb-0.5">소방 화재</p><p class="text-white">114</p></div>
+                            <div class="bg-slate-800 p-2 rounded-xl"><p class="text-[10px] text-slate-400 mb-0.5">구급 앰뷸런스</p><p class="text-white">115</p></div>
+                        </div>
+                        <div class="bg-slate-800 p-3 rounded-xl text-center text-xs border border-slate-700/60">
+                            <span class="text-slate-400 block sm:inline">주호치민 대한민국 총영사관 비상연락:</span> 
+                            <strong class="text-amber-300 tracking-wide block sm:inline sm:ml-1 text-sm">093-850-0238</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        /* 1. 번호 선택 드롭다운 1부터 35까지 자동 삽입 로직 */
+        const numSelect = document.getElementById('user-number');
+        for (let i = 1; i <= 35; i++) {
+            const opt = document.createElement('option');
+            opt.value = i;
+            opt.textContent = `${i}번`;
+            numSelect.appendChild(opt);
+        }
+
+        /* 2. 학생 정보 프로필 로컬 스토리지 실시간 동기화 함수 */
+        function saveProfile() {
+            const userClass = document.getElementById('user-class').value;
+            const userNumber = document.getElementById('user-number').value;
+            const userName = document.getElementById('user-name').value;
+
+            const profile = { userClass, userNumber, userName };
+            localStorage.setItem('kisStudentProfile', JSON.stringify(profile));
+
+            updateProfileUI(userClass, userNumber, userName);
+        }
+
+        function loadProfile() {
+            const saved = localStorage.getItem('kisStudentProfile');
+            if (saved) {
+                const { userClass, userNumber, userName } = JSON.parse(saved);
+                document.getElementById('user-class').value = userClass || '';
+                document.getElementById('user-number').value = userNumber || '';
+                document.getElementById('user-name').value = userName || '';
+                updateProfileUI(userClass, userNumber, userName);
+            }
+        }
+
+        function updateProfileUI(cls, num, name) {
+            const msgElement = document.getElementById('welcome-message');
+            const titleElement = document.getElementById('user-title-dashboard');
+            
+            if (cls && num && name) {
+                msgElement.innerHTML = `반가워요, <span class="text-primary font-black">${cls}반 ${num}번 ${name}</span> 학생! 🎉`;
+                titleElement.textContent = `${name} 학생의`;
+            } else {
+                msgElement.textContent = "반가워요, KIS 6학년 어린이! 👋";
+                titleElement.textContent = "나의";
+            }
+        }
+
+        /* 3. 상단 내비게이션 메뉴 스위칭 모듈 */
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.className = "tab-btn px-4 py-2 rounded-lg text-xs font-bold text-slate-500 hover:text-slate-800 transition-all";
+            });
+            document.getElementById(tabId).classList.add('active');
+            
+            const activeBtn = Array.from(document.querySelectorAll('.tab-btn')).find(b => b.onclick.toString().includes(tabId));
+            if(activeBtn) {
+                activeBtn.className = "tab-btn active px-4 py-2 rounded-lg text-xs font-bold text-primary bg-white shadow-sm transition-all";
+            }
+        }
+
+        /* 4. 과제 매트릭스 시스템 */
+        const recommendTasks = [
+            { id: 101, type: 'hobby', label: '취미', title: '좋아하는 노래 가사 완전히 외우기' },
+            { id: 102, type: 'hobby', label: '취미', title: '수채화(유화, 아크릴화)로 그림 멋지게 그리기' },
+            { id: 103, type: 'hobby', label: '취미', title: '사랑하는 반려동물과 주 3회 따뜻한 산책하기' },
+            { id: 104, type: 'hobby', label: '취미', title: '방학 동안 평소 배우고 싶었던 악기 연습하기' },
+            { id: 105, type: 'hobby', label: '취미', title: '맛있는 요리 레시피를 배워 가족 대접하기' },
+            { id: 106, type: 'hobby', label: '취미', title: '온라인 미술관 탐방 후 명작 1개 골라 소개하기' },
+            { id: 107, type: 'explore', label: '탐구', title: '일출 또는 일몰 풍경을 기록하고 인증사진 촬영하기' },
+            { id: 108, type: 'explore', label: '탐구', title: '식물이나 반려 화분 기르며 성장 일기 쓰기' },
+            { id: 109, type: 'explore', label: '탐구', title: '스텔라리움으로 오늘 밤 호치민 밤하늘 별자리 분석하기' },
+            { id: 110, type: 'health', label: '건강', title: '줄넘기 모둠발 뛰기 주 3회 30분 규칙적 수행하기' },
+            { id: 111, type: 'health', label: '건강', title: '내가 흥미를 느끼는 실내외 스포츠 정해 실천하기' },
+            { id: 112, type: 'health', label: '기타', title: '내가 자유롭게 디자인하여 자율 과제 설계해보기' }
+        ];
+
+        let myTasks = JSON.parse(localStorage.getItem('mySummerTasks')) || [];
+
+        function renderRecommendTable() {
+            const tbody = document.getElementById('recommend-task-table');
+            tbody.innerHTML = '';
+            recommendTasks.forEach((task, idx) => {
+                const isAdded = myTasks.some(t => t.title === task.title);
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50/80 transition-colors";
+                tr.innerHTML = `
+                    <td class="py-3 px-4 text-center text-slate-400 font-semibold">${idx + 1}</td>
+                    <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 rounded-lg text-[10px] font-bold ${getBadgeClass(task.type)}">${task.label}</span></td>
+                    <td class="py-3 px-4 text-slate-800 font-bold">${task.title}</td>
+                    <td class="py-3 px-4 text-center">
+                        <button onclick="addRecommendTask(${task.id})" ${isAdded ? 'disabled' : ''} 
+                            class="px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all ${isAdded ? 'bg-slate-100 text-slate-300 cursor-not-allowed' : 'bg-primary text-white hover:bg-indigo-600 shadow-sm'}">
+                            ${isAdded ? '담김 완료' : '내 보드로 담기'}
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function getBadgeClass(type) {
+            if (type === 'hobby') return 'bg-indigo-50 text-indigo-600';
+            if (type === 'explore') return 'bg-emerald-50 text-emerald-600';
+            return 'bg-rose-50 text-rose-600';
+        }
+
+        function addRecommendTask(id) {
+            const target = recommendTasks.find(t => t.id === id);
+            if (!target || myTasks.some(t => t.title === target.title)) return;
+            myTasks.push({ id: Date.now() + Math.random(), category: target.type === '기타' ? 'hobby' : target.type, title: target.title, completed: false });
+            localStorage.setItem('mySummerTasks', JSON.stringify(myTasks));
+            renderTasks(); renderRecommendTable();
+        }
+
+        function renderTasks() {
+            ['hobby', 'explore', 'health'].forEach(cat => {
+                const container = document.getElementById(`tasks-${cat}`);
+                container.innerHTML = '';
+                const filtered = myTasks.filter(t => t.category === cat);
+                if(filtered.length === 0) {
+                    container.innerHTML = `<p class="text-slate-300 text-center py-5 text-[11px]">담긴 활동이 없습니다.</p>`;
+                    return;
+                }
+                filtered.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = `flex items-center justify-between p-2.5 rounded-xl text-[11px] font-bold transition-all ${item.completed ? 'bg-slate-100 text-slate-400 line-through' : 'bg-slate-50 border border-slate-100 text-slate-700'}`;
+                    div.innerHTML = `<label class="flex items-start space-x-2 cursor-pointer flex-1"><input type="checkbox" ${item.completed ? 'checked' : ''} onchange="toggleTask(${item.id})" class="mt-0.5 rounded border-slate-300 text-primary h-3.5 w-3.5"><span class="leading-tight">${item.title}</span></label><button onclick="deleteTaskItem(${item.id})" class="text-slate-300 hover:text-rose-500 text-sm px-1">×</button>`;
+                    container.appendChild(div);
+                });
+            });
+        }
+        function toggleTask(id) { const task = myTasks.find(t => t.id === id); task.completed = !task.completed; localStorage.setItem('mySummerTasks', JSON.stringify(myTasks)); renderTasks(); }
+        function addTaskItem() {
+            const title = document.getElementById('task-title').value; const cat = document.getElementById('task-category').value;
+            if(!title) return; myTasks.push({ id: Date.now(), category: cat, title, completed: false });
+            localStorage.setItem('mySummerTasks', JSON.stringify(myTasks)); document.getElementById('task-title').value = ''; renderTasks(); renderRecommendTable();
+        }
+        function deleteTaskItem(id) { myTasks = myTasks.filter(t => t.id !== id); localStorage.setItem('mySummerTasks', JSON.stringify(myTasks)); renderTasks(); renderRecommendTable(); }
+
+        /* 5. 하루 루틴 스케줄러 인프라 */
+        let myRoutine = JSON.parse(localStorage.getItem('mySummerRoutine')) || [
+            { id: 1, startTime: '08:30', endTime: '09:00', title: '☀️ 상쾌한 아침 기상', desc: '스트레칭 후 오늘 달성할 미션과 계획 미리 스캔하기' },
+            { id: 2, startTime: '09:30', endTime: '11:30', title: '📚 집중 자율 학습 및 독서', desc: '오전 시간을 활용해 6학년 2학기 교과 복습 및 독서하기' },
+            { id: 3, startTime: '13:30', endTime: '15:30', title: '🎨 나만의 감각적인 취미 시간', desc: '노래 가사 암기, 드로잉, 악기 연습 등 내가 선택한 과제 채우기' },
+            { id: 4, startTime: '16:30', endTime: '17:30', title: '🏃 기초 체력 홈트 및 운동', desc: '아파트 단지나 안전지대에서 줄넘기 및 스트레칭 30분하기' },
+            { id: 5, startTime: '20:00', endTime: '21:00', title: '🏡 가족과 대화 및 오늘 반성', desc: '부모님과 대화를 나누고 대시보드의 체크리스트 보며 마감하기' }
+        ];
+
+        function renderRoutine() {
+            const container = document.getElementById('routine-list'); container.innerHTML = '';
+            myRoutine.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = "flex flex-col md:flex-row gap-3 p-3.5 bg-slate-50/60 rounded-xl border border-slate-100 group relative hover:bg-slate-50 transition-all";
+                div.innerHTML = `<div class="flex-1 grid grid-cols-1 md:grid-cols-4 gap-2 items-center"><div class="bg-white border border-slate-200 rounded-lg p-1.5 flex items-center text-xs font-bold text-indigo-600 max-w-fit shadow-sm"><input type="time" value="${item.startTime}" onchange="updateRoutine(${index},'startTime',this.value)" class="bg-transparent outline-none"><span>~</span><input type="time" value="${item.endTime}" onchange="updateRoutine(${index},'endTime',this.value)" class="bg-transparent outline-none"></div><input type="text" value="${item.title}" onchange="updateRoutine(${index},'title',this.value)" class="font-bold text-sm bg-transparent outline-none border-b border-transparent focus:border-primary text-slate-800"><input type="text" value="${item.desc}" onchange="updateRoutine(${index},'desc',this.value)" class="text-xs font-medium text-slate-400 bg-transparent outline-none md:col-span-2"></div><button onclick="deleteRoutine(${index})" class="text-rose-400 opacity-0 group-hover:opacity-100 transition-opacity text-xs absolute right-3 top-3 md:static font-bold">삭제</button>`;
+                container.appendChild(div);
+            });
+        }
+        function updateRoutine(idx, key, val) { myRoutine[idx][key] = val; localStorage.setItem('mySummerRoutine', JSON.stringify(myRoutine)); }
+        function addRoutineItem() { myRoutine.push({ id: Date.now(), startTime: '18:00', endTime: '19:00', title: '새로운 활동', desc: '여기에 해야 할 행동들을 채우세요.' }); localStorage.setItem('mySummerRoutine', JSON.stringify(myRoutine)); renderRoutine(); }
+        function deleteRoutine(idx) { myRoutine.splice(idx, 1); localStorage.setItem('mySummerRoutine', JSON.stringify(myRoutine)); renderRoutine(); }
+
+        /* 6. 메모리 캘린더 타임라인 */
+        let myTrips = JSON.parse(localStorage.getItem('mySummerTrips')) || [
+            { date: '2026-07-15', title: '즐거운 여름방학 개막! 🎉', memo: '계획 무너지지 않게 첫 주 생활 루틴 무조건 엄수하기!' },
+            { date: '2026-07-20', title: '방과후학교 첫 등교 날 🏫', memo: '10일 동안 지각하지 않고 알차게 공부해서 실력 쌓기' }
+        ];
+        function renderTrips() {
+            const container = document.getElementById('trip-timeline'); container.innerHTML = '';
+            myTrips.sort((a,b) => new Date(a.date) - new Date(b.date));
+            myTrips.forEach((item, index) => {
+                const dateObj = new Date(item.date);
+                const formattedDate = !isNaN(dateObj) ? `${dateObj.getMonth()+1}월 ${dateObj.getDate()}일` : item.date;
+                const div = document.createElement('div');
+                div.className = "flex items-start relative pl-8 group";
+                div.innerHTML = `<div class="absolute left-2.5 top-2.5 h-3.5 w-3.5 rounded-full border-2 border-white bg-primary shadow-sm group-hover:scale-125 transition-transform"></div><div class="bg-white border border-slate-100 shadow-sm rounded-2xl p-4 w-full flex justify-between items-center hover:shadow-md hover:border-slate-200 transition-all"><div><span class="text-[9px] font-extrabold text-primary bg-indigo-50 px-2 py-0.5 rounded-md">${formattedDate}</span><h4 class="font-bold text-slate-800 text-sm mt-1">${item.title}</h4><p class="text-xs text-slate-400 font-medium mt-0.5">${item.memo}</p></div><button onclick="deleteTrip(${index})" class="text-slate-200 hover:text-rose-500 font-bold px-2 text-sm transition-colors">×</button></div>`;
+                container.appendChild(div);
+            });
+        }
+        function addTripItem() {
+            const date = document.getElementById('trip-date').value; const title = document.getElementById('trip-title').value; const memo = document.getElementById('trip-memo').value;
+            if(!date || !title) return alert('날짜와 제목을 필수 입력해주세요!');
+            myTrips.push({ date, title, memo }); localStorage.setItem('mySummerTrips', JSON.stringify(myTrips)); renderTrips();
+            document.getElementById('trip-date').value = ''; document.getElementById('trip-title').value = ''; document.getElementById('trip-memo').value = '';
+        }
+        function deleteTrip(idx) { myTrips.splice(idx, 1); localStorage.setItem('mySummerTrips', JSON.stringify(myTrips)); renderTrips(); }
+
+        // 웹사이트 로딩 초기 구동 컨트롤러
+        loadProfile(); renderRecommendTable(); renderTasks(); renderRoutine(); renderTrips();
+    </script>
+</body>
+</html>
